@@ -1,0 +1,11 @@
+# Start comment lines with the pound (#) symbol
+# Make words *italic* or remove \formatting from any word. You can change these symbols in text-config.txt
+# Different cards belong on different lines
+# If a field is unused, keep it empty
+# Fields in order from left to right (separate each with a TAB):
+# Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
+
+# Fate Deck
+
+
+# Villain Deck

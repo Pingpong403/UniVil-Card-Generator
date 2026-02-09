@@ -1,0 +1,9 @@
+# Start comment lines with the pound (#) symbol
+# These settings allow you to change the way the generator handles card data
+# You cannot add your own settings! Only the ones here may be modified
+# Each setting has its own parameters. Only values within these parameters will be recognized
+# If a setting is left blank, then the default value will be used
+
+# Whether or not you want your cards to be sorted by Deck when exported.
+# Accepts: true, false. Default: false
+exportByDeck:

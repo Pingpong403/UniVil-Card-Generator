@@ -1,0 +1,16 @@
+w:1440
+h:2044
+imageAreaHeight:973
+textAreaMaxWidth:1230
+titleAreaMaxHeight:166
+abilityAreaMaxHeight:645
+activateCostAreaMaxWidth:670
+sideActivateAbilityMaxWidth:750
+sideActivateAbilityCenterX:880
+colonCenterX:580
+colonPadding:50
+abilityBottomPadding:20
+typeAreaMaxWidth:428
+typeAreaMaxHeight:166
+cornerElementMaxWidth:159
+cornerElementMaxHeight:115

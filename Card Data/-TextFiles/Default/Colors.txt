@@ -1,0 +1,10 @@
+# Start comment lines with the pound (#) symbol
+# Put all keywords you want colored here.
+# You can add new keywords and specify their color.
+# Format new keyword colors like this:
+# [Keyword]|[hexcode color]
+Ally
+Item
+Effect
+Plot
+Hero

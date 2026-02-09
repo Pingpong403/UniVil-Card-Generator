@@ -1,0 +1,4 @@
+titleMaxWidthMIN:750
+titleMaxWidthMAX:1230
+typeMaxWidthMIN:200
+typeMaxWidthMAX:650

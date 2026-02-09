@@ -1,0 +1,2 @@
+This folder, as well as any folder not starting with a hyphen (-), does not need to be interacted with for the generator to work.
+They are used by the generator for many purposes. This folder is where text images go before being placed on the cards.

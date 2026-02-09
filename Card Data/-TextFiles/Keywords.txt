@@ -1,0 +1,15 @@
+# Start comment lines with the pound (#) symbol
+# These keywords will first look in Colors.txt for their corresponding colors, then in color-config.txt.
+# Keywords are always bolded.
+# Put your Villain's name in here! You only need the normal and possessive versions.
+# For Villain names with multiple words (e.g. The Hacker), put each word in its own entry. Only the last word needs a possessive version.
+# Format any new keywords like this:
+# [Keyword]|[Keyword plural]|[Keyword possessive]|[Keyword plural possessive]
+Dear
+User|User's
+Ally|Allies|Ally's|Allies'
+Item|Items|Item's|Items'
+Effect|Effects|Effect's|Effects'
+Plot|Plots|Plot's|Plots'
+Hero|Heroes|Hero's|Heroes'
+Tip|Tips|Tip's|Tips'

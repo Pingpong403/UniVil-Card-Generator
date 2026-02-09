@@ -1,0 +1,22 @@
+# Start comment lines with the pound (#) symbol
+# Make words *italic* or remove \formatting from any word. You can change these symbols in text-config.txt
+# Different cards belong on different lines
+# If a field is unused, keep it empty
+# Fields in order from left to right (separate each with a TAB):
+# Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
+
+# Fate Deck
+
+
+# Villain deck
+
+
+# Showcase decks
+#Tutorial			Welcome to the ToonVil Card Generator!%I hope you enjoy using it and discovering all its features. DividingLine_ Dear User: I see you've found the tutorial section. Congrats! You know how to poke around and figure stuff out. I hope these cards show just how powerful the generator is, and give you an idea of how to use it!%%Go find ToonVil-Card-Generator.exe and run it to get the rest of the tutorial!			Tip			Tutorial	
+1 Tutorial			Welcome to the ToonVil Card Generator!%I hope you enjoy using it and discovering all its features. DividingLine_ Dear User: I see you've found the tutorial section. Congrats! You know how to poke around and figure stuff out. I hope these cards show just how powerful the generator is, and give you an idea of how to use it!			Tip			Tutorial	
+2 TextFiles			This card is second. Read Tutorial before you read%me! DividingLine_ Dear User: -TextFiles is where you will put all of your cards' text data! Cards.txt holds all your cards as entries. Each entry has different elements, each separated with a TAB. Keywords.txt is where you will put each keyword (plus any variations), including the Villain name! Colors.txt is where you will specify what color each keyword should be.			Tip			TextFiles	
+3 Images			This card is third. Read TextFiles before you read me! DividingLine_ Dear User: -Images is where you will put the card images. Don't worry about cropping them, as the generator will fit them properly! Just make sure the images are wide enough, as they will be sized accoring to their height.			Tip			Images	
+4 Layout			This card is fourth. Read Images before you read me! DividingLine_ Dear User: -Layout is where you will put the card elements that are the same for each deck. For example, since you only need one card back design for every Villain card, put it in here! Name it VillainDeck and the generator will use it for all your Villain cards. Do the same for corner elements.			Tip			Layout	
+5 Exports			This card is fifth. Read Layout before you read me! DividingLine_ Dear User: -Exports is where your final products will be put! You don't have to do anything about this folder. The generator will take all the data you put in -TextFiles, -Images, and -Layout, put it all together, then spit it all out in -Exports.			Tip			Exports	
+6 Off-Limits			This card is sixth. Read Exports before you read me! DividingLine_ Dear User: The folders you have already learned about are all you need to interact with. Everything else is there just to make sure the generator can do its job. Deleting, editing, and moving unfamiliar folders can result in the generator breaking!			Tip			Off-Limits	
+7 Extras			This card is last. Read Off-Limits before you read me! DividingLine_ Dear User: Make sure you read all the "whatisthis.txt" files in each folder! When you delete these cards, they will be your guiding%stars.%%Thank you for reading all the way through! Now get out there and make some cards!			Tip			Extras	

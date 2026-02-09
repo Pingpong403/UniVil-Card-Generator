@@ -1,0 +1,2 @@
+-Images is where you need to put images with matching names for your cards.
+When looking for the right image, the generator will ignore ending punctuation.

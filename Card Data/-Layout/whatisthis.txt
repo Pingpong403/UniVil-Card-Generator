@@ -1,0 +1,3 @@
+-Layout is where you put the card and element backgrounds for your cards.
+Cards will be built by putting the correct elements first, then the text you want in them.
+Do not touch the images in Default! Simply copy/paste them into here to start a fresh Villain.

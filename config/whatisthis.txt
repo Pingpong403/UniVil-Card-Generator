@@ -1,0 +1,8 @@
+Config files are how you change the settings of the generator without coding.
+The generator looks here for a lot of the values, files, symbols, and settings it uses.
+
+asset-config: anything to do with assets and how the generator handles them
+card-config: card dimensions, text area sizes, and image area height
+color-config: any color that is standard across this system
+layout-config: element positioning
+text-config: data concerning how text is drawn and which formatting symbols will be used

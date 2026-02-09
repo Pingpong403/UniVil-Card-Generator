@@ -1,0 +1,13 @@
+# Start comment lines with the pound (#) symbol
+# These settings allow you to change the way the generator draws cards
+# You cannot add your own settings! Only the ones here may be modified
+# Each setting has its own parameters. Only values within these parameters will be recognized
+# If a setting is left blank, then the default value will be used
+
+# The maximum width the Title can take. Shrink for larger ornaments.
+# Accepts: any number within 750-1230. Default: 1230
+titleMaxWidth:
+
+# The maximum width the Type can take. Enlarge for longer type names/combinations.
+# Accepts: any number within 200-650. Default: 428
+typeMaxWidth:

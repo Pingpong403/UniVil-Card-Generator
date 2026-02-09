@@ -1,0 +1,5 @@
+-Exports is where your assembled cards will come out once you run the generator.
+
+--TROUBLESHOOTING--
+"There's a black background where the image should be": this happens when card can't find a suitable image in -Images. Either 1) the image is missing, 2) the image isn't in the right format (it needs to be .png, .jpg, or .jpeg), or 3) the image has disallowed punctuation at the end.
+"One or more of my cards is missing": the generator will ignore entries in Cards.txt that do not have all the necessary fields. If the title, ability, or type is missing, the card will not be generated. Make sure every field is included, leaving unused fields blank. If some -Layout elements are missing, the generator will tell you which ones to add.

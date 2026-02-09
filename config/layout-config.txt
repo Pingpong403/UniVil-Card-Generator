@@ -1,0 +1,14 @@
+titleCenterX:720
+titleCenterY:1152
+abilityCenterX:720
+abilityTopY:1284
+typeCenterX:720
+typeCenterY:1986
+costCenterX:189
+costCenterY:195
+strengthCenterX:139
+strengthCenterY:1905
+topRightCenterX:1253
+topRightCenterY:195
+bottomRightCenterX:1302
+bottomRightCenterY:1904
