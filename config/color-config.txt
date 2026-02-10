@@ -1,7 +1,10 @@
-allyColor:ff1919
-itemColor:193fff
-effectColor:19ff23
-plotColor:d3568d
-heroColor:eda64b
-fontColor:d7b06c
-ornamentColor:d7b06c
+allyColor:de0022
+itemColor:45afe6
+effectColor:7ac424
+conditionColor:d3568d
+heroColor:e68c0a
+formColor:980000
+victimColor:009898
+monsterColor:489366
+fontColor:ffffff
+ornamentColor:ffffff

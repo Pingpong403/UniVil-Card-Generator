@@ -6,6 +6,8 @@
 Ally
 Item
 Effect
-Plot
+Condition
+Form
 Hero
-Tip|ffffff
+Monster
+Victim

@@ -5,7 +5,10 @@
 # Fields in order from left to right (separate each with a TAB):
 # Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
 
-# Fate Deck
+# Monster Rally deck
 
 
-# Villain Deck
+# Fate deck
+
+
+# Villain deck

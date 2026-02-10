@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 
-namespace ToonVil_Card_Generator.CardGeneration
+namespace UniVil_Card_Generator.CardGeneration
 {
     public static class FontLoader
     {

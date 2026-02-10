@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Data.SqlTypes;
 
-namespace ToonVil_Card_Generator.CardGeneration
+namespace UniVil_Card_Generator.CardGeneration
 {
 	public static class PrepareText
 	{

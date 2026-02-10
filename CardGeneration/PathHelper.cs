@@ -1,6 +1,6 @@
 using System;
 
-namespace ToonVil_Card_Generator
+namespace UniVil_Card_Generator
 {
 	public static class PathHelper
 	{

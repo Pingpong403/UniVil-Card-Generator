@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 
-namespace ToonVil_Card_Generator.CardGeneration
+namespace UniVil_Card_Generator.CardGeneration
 {
 	public static class PrepareImage
 	{

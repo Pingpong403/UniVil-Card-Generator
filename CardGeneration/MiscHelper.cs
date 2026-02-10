@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace ToonVil_Card_Generator.CardGeneration
+namespace UniVil_Card_Generator.CardGeneration
 {
 	public static class MiscHelper
 	{
@@ -28,13 +28,13 @@ namespace ToonVil_Card_Generator.CardGeneration
 			switch (infractions)
 			{
 				case 63:
-					Console.WriteLine("Executable is not in project root. Please relocate to ToonVil-Card-Generator folder.");
+					Console.WriteLine("Executable is not in project root. Please relocate to UniVil-Card-Generator folder.");
 					return false;
 				case int n when n < 63 && n >= 8:
-					Console.WriteLine("Missing one or more vital configuration folders. Please redownload or relocate missing folders to the ToonVil-Card-Generator folder.");
+					Console.WriteLine("Missing one or more vital configuration folders. Please redownload or relocate missing folders to the UniVil-Card-Generator folder.");
 					return false;
 				case 7:
-					Console.WriteLine("Missing Card Data folder. Please redownload or relocate the folder to the ToonVil-Card-Generator folder.");
+					Console.WriteLine("Missing Card Data folder. Please redownload or relocate the folder to the UniVil-Card-Generator folder.");
 					return false;
 				case int n when n < 7 && n >= 1:
 					Console.WriteLine("Missing one or more vital Card Data folders. Please ensure -TextFiles, -Layout, and -Images are placed in Card Data.");

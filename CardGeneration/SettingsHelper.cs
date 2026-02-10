@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace ToonVil_Card_Generator.CardGeneration
+namespace UniVil_Card_Generator.CardGeneration
 {
 	public static class SettingsHelper
 	{

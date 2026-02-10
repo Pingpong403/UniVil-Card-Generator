@@ -1,16 +1,16 @@
-using ToonVil_Card_Generator.CardGeneration;
-using static ToonVil_Card_Generator.CardGeneration.PrepareText;
-using static ToonVil_Card_Generator.CardGeneration.PrepareImage;
+﻿using UniVil_Card_Generator.CardGeneration;
+using static UniVil_Card_Generator.CardGeneration.PrepareText;
+using static UniVil_Card_Generator.CardGeneration.PrepareImage;
 using System.Drawing;
 using System.Reflection;
 
-namespace ToonVil_Card_Generator;
+namespace UniVil_Card_Generator;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("ToonVil Card Generator");
+        Console.WriteLine("UniVil Card Generator");
 
         if (!MiscHelper.CheckStructure())
         {
@@ -20,6 +20,7 @@ class Program
         
         // Setup variables
         Color textColor = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
+		Color fateTextColor = ColorTranslator.FromHtml("#000000");
         int titleAreaMaxWidth = SettingsHelper.GetSettingsValue("Card", "titleMaxWidth") == "" ?
             int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth")) :
             int.Parse(SettingsHelper.GetSettingsValue("Card", "titleMaxWidth"));
@@ -87,13 +88,13 @@ class Program
                     // Skip cards that do not have all the necessary elements
                     if (title != "" && (ability != "" || activateAbility != "" || activateCost != "" || gainsAction != "") && type != "")
                     {
-                        DrawTitle(title, titleFont, textColor, titleAreaMaxWidth, titleAreaMaxHeight);
-                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, textColor, abilityAreaMaxWidth, abilityAreaMaxHeight, keywordsAndColors);
-                        DrawType(type, typeFont, textColor, typeAreaMaxWidth, typeAreaMaxHeight, keywordsAndColors);
-                        if (cost != "") DrawCornerElement(cost, costFont, textColor, "Cost", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (strength != "") DrawCornerElement(strength, strengthFont, textColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
+                        DrawTitle(title, titleFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, titleAreaMaxWidth, titleAreaMaxHeight);
+                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, abilityAreaMaxWidth, abilityAreaMaxHeight, keywordsAndColors);
+                        DrawType(type, typeFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, typeAreaMaxWidth, typeAreaMaxHeight, keywordsAndColors);
+                        if (cost != "") DrawCornerElement(cost, costFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, "Cost", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (strength != "") DrawCornerElement(strength, strengthFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (topRight != "") DrawCornerElement(topRight, topRightFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, deck == "Fate" || deck == "MonsterRally" ? fateTextColor : textColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
 
                         while (MiscHelper.IsPunctuation(char.ToString(title[^1])))
                         {
