@@ -154,6 +154,23 @@ namespace UniVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
+		/// Changes the color of the given symbol.
+		/// </summary>
+		/// <param name="symbol">the symbol to change</param>
+		/// <param name="color">the color to change the symbol to</param>
+		public static void ColorSymbol(Bitmap symbol, Color color)
+		{
+			for (int x = 0; x < symbol.Width; x++)
+			{
+				for (int y = 0; y < symbol.Height; y++)
+				{
+					int alpha = symbol.GetPixel(x, y).A;
+					symbol.SetPixel(x, y, Color.FromArgb(alpha, color));
+				}
+			}
+		}
+
+		/// <summary>
 		/// Helper method to capitalize just the first letter in a string.
 		/// </summary>
 		/// <param name="input">String to be capitalized</param>

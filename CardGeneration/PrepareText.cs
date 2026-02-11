@@ -235,7 +235,7 @@ namespace UniVil_Card_Generator.CardGeneration
 					{
 						currentY = lineHeight * 0.25F;
 					}
-					DrawSymbol(activateSymbol, drawing, symbolCenterX, currentY + actionSymbolLines * lineHeight / 2, resizing);
+					DrawSymbol(activateSymbol, drawing, textColor, symbolCenterX, currentY + actionSymbolLines * lineHeight / 2, resizing);
 					
 					// Cost, if any
 					if (activateCost != "")
@@ -272,7 +272,7 @@ namespace UniVil_Card_Generator.CardGeneration
 				{
 					// Symbol
 					symbolCenterX = sideAACenterX - sideAAMaxW / 2 - 100 - activateSymbol.Width * resizing / 2;
-					DrawSymbol(activateSymbol, drawing, symbolCenterX, currentY + activateAbilityHeight / 2, resizing);
+					DrawSymbol(activateSymbol, drawing, textColor, symbolCenterX, currentY + activateAbilityHeight / 2, resizing);
 					
 					// Activate ability
 					words = GetCardWords(activateAbility, textBrush, font, keywordsAndColors);
@@ -303,7 +303,7 @@ namespace UniVil_Card_Generator.CardGeneration
 				string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + ".png"));
 				Image gainsSymbol = Image.FromFile(gainsSymbolPath);
 				float resizing = actionSymbolLines * lineHeight / gainsSymbol.Height;
-				DrawSymbol(gainsSymbol, drawing, maxWidth / 2, currentY + actionSymbolLines * lineHeight / 2, resizing);
+				DrawSymbol(gainsSymbol, drawing, textColor, maxWidth / 2, currentY + actionSymbolLines * lineHeight / 2, resizing);
 
 				// If this was a Gain Power action, draw the amount to be gained
 				if (gainPowerAmt != "")
@@ -505,8 +505,21 @@ namespace UniVil_Card_Generator.CardGeneration
 			char newlineSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "newlineCharacter"));
 
 			Font italicFont = new Font(defaultFont, FontStyle.Italic);
-			Font boldFont = new(defaultFont, FontStyle.Bold);
-			Font boldItalicFont = new Font(defaultFont, FontStyle.Bold | FontStyle.Italic);
+			Font boldFont;
+			if (!isType && keywordData is not null)
+			{
+				string regularVariant = ConfigHelper.GetConfigValue("text", "abilityFont");
+				string boldVariant = regularVariant[0..^4] + "Bold" + regularVariant[^4..^0];
+				string boldPath = PathHelper.GetFullPath(Path.Combine("fonts", boldVariant));
+				boldFont = File.Exists(boldPath) ?
+					FontLoader.GetFont(boldPath, defaultFont.Size, FontStyle.Regular) :
+					new(defaultFont, FontStyle.Bold);
+			}
+			else
+			{
+				boldFont = new(defaultFont, FontStyle.Bold);
+			}
+			Font boldItalicFont = new Font(boldFont, boldFont.Style | FontStyle.Italic);
 
 			List<CardWord> cardWords = [];
 
@@ -525,7 +538,7 @@ namespace UniVil_Card_Generator.CardGeneration
 						CardWord word = new(
 							builtWord,
 							isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
-							isKeyword && !ignoreFormatting ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+							isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
 						);
 						word.SetType(isType);
 						cardWords.Add(word);
@@ -565,7 +578,7 @@ namespace UniVil_Card_Generator.CardGeneration
 							CardWord word = new(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
-								isKeyword && !ignoreFormatting ? (!italicsOpen ? boldItalicFont : boldFont) : !italicsOpen ? italicFont : defaultFont
+								isKeyword && !ignoreFormatting && !isType ? (!italicsOpen ? boldItalicFont : boldFont) : !italicsOpen ? italicFont : defaultFont
 							);
 							cardWords.Add(word);
 							builtWord = "";
@@ -583,7 +596,7 @@ namespace UniVil_Card_Generator.CardGeneration
 							CardWord word = new(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
-								isKeyword && !ignoreFormatting ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+								isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
 							);
 							cardWords.Add(word);
 							builtWord = "";
@@ -599,7 +612,7 @@ namespace UniVil_Card_Generator.CardGeneration
 							CardWord word = new(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
-								isKeyword && !ignoreFormatting ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+								isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
 							);
 							cardWords.Add(word);
 							cardWords.Add(new CardWord(Convert.ToString(letter), defaultBrush, defaultFont));
@@ -620,7 +633,7 @@ namespace UniVil_Card_Generator.CardGeneration
 				CardWord word = new(
 					builtWord,
 					isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
-					isKeyword && !ignoreFormatting ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+					isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
 				);
 				word.SetType(isType);
 				cardWords.Add(word);
@@ -793,7 +806,7 @@ namespace UniVil_Card_Generator.CardGeneration
 					Image asset = Image.FromFile(gainsSymbolPath);
 					float resizing = string.Equals(assetName, "DividingLine") ? 1.0F : asLines * lineH / asset.Height;
 					float yOffset = string.Equals(assetName, "DividingLine") ? dlLines * lineH / 2 : asLines * lineH / 2;
-					DrawSymbol(asset, g, maxW / 2, currentY + yOffset, resizing);
+					DrawSymbol(asset, g, color, maxW / 2, currentY + yOffset, resizing);
 
 					// If this was a Gain Power action, draw the amount to be gained
 					if (gainPowerAmt != "")
@@ -836,9 +849,10 @@ namespace UniVil_Card_Generator.CardGeneration
 		/// <param name="centerX">the x-coordinate of the center of the symbol</param>
 		/// <param name="centerY">the y-coordinate of the center of the symbol</param>
 		/// <param name="resizing">optional resizing factor</param>
-		private static void DrawSymbol(Image symbol, Graphics g, float centerX, float centerY, float resizing = 1.0F)
+		private static void DrawSymbol(Image symbol, Graphics g, Color color, float centerX, float centerY, float resizing = 1.0F)
 		{
 			Bitmap b = new(symbol, new Size((int)(symbol.Width * resizing), (int)(symbol.Height * resizing)));
+			MiscHelper.ColorSymbol(b, color);
 			float x = centerX - resizing * symbol.Width / 2;
 			float y = centerY - resizing * symbol.Height / 2;
 			g.DrawImage(b, new PointF(x, y));

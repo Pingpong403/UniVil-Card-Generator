@@ -1,0 +1,10 @@
+# Start comment lines with the pound (#) symbol
+# These settings allow you to change the way the generator outputs text
+# You cannot add your own settings! Only the ones here may be modified
+# Each setting has its own parameters. Only values within these parameters will be recognized
+# If a setting is left blank, then the default value will be used
+
+# ONLY FOR USE WITH VIDEO GAME ASSETS
+# Change the color your non-Fate cards' text will be.
+# Accepts: any valid hexcode color (e.g. #ffffff). Default: #ffffff
+textColor:
