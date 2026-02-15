@@ -6,9 +6,17 @@
 # Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
 
 # Monster Rally deck
-
+Sample Monster		3	This is a sample Monster for the \Monster Rally deck! It does nothing.			Monster			MonsterRally	
 
 # Fate deck
-
+Sample Hero		5	This is a sample Hero for the Fate deck! It does nothing.			Hero			Fate	
+Sample Fate Item		+1	This is a sample Item for the Fate deck! It does nothing.			Item			Fate	
+Sample Fate Effect			This is a sample Effect for the Fate deck! It does nothing.			Effect			Fate	
+Sample Victim		4	This is a sample Victim for the Fate deck! It does nothing.			Victim			Fate	
 
 # Villain deck
+#Sample Ally			Run 'UniVil-Card-Generator.exe' to generate some cards. Look in -TextFiles to see how they were made. Visit -Layout to find the images used to create them.			Ally			Villain	
+Sample Ally	2	4	This is a sample Ally for the Villain deck! It does nothing.%This location gains:			Ally			Villain	PlayCard_
+Sample Item	3		This is a sample Item for the Villain deck! It does nothing.	Do nothing.	Pay 0 Power	Item			Villain	
+Sample Effect	1		This is a sample Effect for the Villain deck! It does nothing.			Effect			Villain	
+Sample Form	3		This is a sample Form for the Villain deck! It does nothing.			Form			Villain	
