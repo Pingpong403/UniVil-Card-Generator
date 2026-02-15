@@ -1,3 +1,3 @@
 dividingLineLines:0.85
-actionSymbolLines:3
+actionSymbolLines:3.3
 actionSymbolMinLines:2.5

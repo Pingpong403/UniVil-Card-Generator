@@ -1,7 +1,7 @@
 titleCenterX:720
 titleCenterY:1158
 abilityCenterX:720
-abilityTopY:1295
+abilityTopY:1300
 typeCenterX:720
 typeCenterY:1977
 costCenterX:187

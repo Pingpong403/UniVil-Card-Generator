@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace UniVil_Card_Generator.CardGeneration
@@ -154,6 +155,25 @@ namespace UniVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
+		/// Checks if the given string is in the correct format for a hexcode color, including the "#".
+		/// </summary>
+		/// <param name="color">the string to check</param>
+		/// <returns>whether or not the given string adheres to the required standards</returns>
+		public static bool CorrectColorFormat(string color)
+		{
+			if (color == "") return false; // empty string
+			if (color[0] != '#') return false; // needs the leading #
+			color = color[1..^0];
+			if (color.Length != 6) return false; // hexcode colors use 6 characters
+			color = color.ToLower();
+			foreach (char letter in color)
+			{
+				if (letter < 48 || (letter > 57 && letter < 97) || letter > 102) return false; // targetting the values for hexadecimal chars
+			}
+			return true;
+		}
+
+		/// <summary>
 		/// Changes the color of the given symbol.
 		/// </summary>
 		/// <param name="symbol">the symbol to change</param>
@@ -168,6 +188,47 @@ namespace UniVil_Card_Generator.CardGeneration
 					symbol.SetPixel(x, y, Color.FromArgb(alpha, color));
 				}
 			}
+		}
+
+		/// <summary>
+		/// Uses relative luminance to convert an image to grayscale.
+		/// </summary>
+		/// <param name="original">a Bitmap containing the image to convert</param>
+		/// <returns>the image in grayscale</returns>
+		/// <meta>Original code from https://web.archive.org/web/20130111215043/http://www.switchonthecode.com/tutorials/csharp-tutorial-convert-a-color-image-to-grayscale</meta>
+		public static Bitmap MakeGrayscale(Bitmap original)
+		{
+			//create a blank bitmap the same size as original
+			Bitmap newBitmap = new Bitmap(original.Width, original.Height);
+			
+			//get a graphics object from the new image
+			Graphics g = Graphics.FromImage(newBitmap);
+
+			//create the grayscale ColorMatrix
+			ColorMatrix colorMatrix = new ColorMatrix(
+				new float[][]
+				{
+					new float[] {.3f, .3f, .3f, 0, 0},
+					new float[] {.59f, .59f, .59f, 0, 0},
+					new float[] {.11f, .11f, .11f, 0, 0},
+					new float[] {0, 0, 0, 1, 0},
+					new float[] {0, 0, 0, 0, 1}
+				});
+
+			//create some image attributes
+			ImageAttributes attributes = new ImageAttributes();
+
+			//set the color matrix attribute
+			attributes.SetColorMatrix(colorMatrix);
+
+			//draw the original image on the new image
+			//using the grayscale color matrix
+			g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
+				0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+
+			//dispose the Graphics object
+			g.Dispose();
+			return newBitmap;
 		}
 
 		/// <summary>

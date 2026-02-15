@@ -6,5 +6,5 @@
 
 # ONLY FOR USE WITH VIDEO GAME ASSETS
 # Change the color your non-Fate cards' text will be.
-# Accepts: any valid hexcode color (e.g. #ffffff). Default: #ffffff
+# Accepts: any valid hexcode color (e.g. #09acdf). Default: #ffffff
 textColor:

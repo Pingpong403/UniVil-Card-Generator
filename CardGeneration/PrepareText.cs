@@ -117,6 +117,7 @@ namespace UniVil_Card_Generator.CardGeneration
 			int abilityBottomPadding = int.Parse(ConfigHelper.GetConfigValue("card", "abilityBottomPadding"));
 			int sideAAMaxW = int.Parse(ConfigHelper.GetConfigValue("card", "sideActivateAbilityMaxWidth"));
 			int sideAACenterX = int.Parse(ConfigHelper.GetConfigValue("card", "sideActivateAbilityCenterX"));
+			bool useVG = SettingsHelper.GetSettingsValue("Card", "useVideoGameAssets") == "true";
 
 			// Set the stringformat flags for center alignment and no trimming
 			StringFormat sf = StringFormat.GenericTypographic;
@@ -186,7 +187,7 @@ namespace UniVil_Card_Generator.CardGeneration
 				paddingHeight = numPadding * lineHeight * paddingLines;
 				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight;
 
-				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.25 : 0)) font = new Font(font.Name, font.Size - granularity, font.Style, font.Unit);
+				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.15 : 0)) font = new Font(font.Name, font.Size - granularity, font.Style, font.Unit);
 			} while (textHeight > maxHeight);
 
 			// Check if font size went below minimum and notify the user
@@ -195,7 +196,13 @@ namespace UniVil_Card_Generator.CardGeneration
 				Console.WriteLine($"THE FOLLOWING CARD'S ABILITY TEXT WENT BELOW THE MIMUMUM {minFontSize}px:");
 			}
 
-			List<CardWord> colon = GetCardWords(":", textBrush, font, keywordsAndColors);
+			string regularVariant = ConfigHelper.GetConfigValue("text", "abilityFont");
+			string boldVariant = regularVariant[0..^4] + "Bold" + regularVariant[^4..^0];
+			string boldPath = PathHelper.GetFullPath(Path.Combine("fonts", boldVariant));
+			Font abilityBoldFont = File.Exists(boldPath) ?
+				FontLoader.GetFont(boldPath, font.Size, FontStyle.Regular) :
+				new(font, FontStyle.Bold);
+			List<CardWord> colon = GetCardWords(":", textBrush, abilityBoldFont, keywordsAndColors);
 			List<CardWord> locationGainsText = GetCardWords("\\This \\location \\gains\\:", textBrush, font, keywordsAndColors);
 
 			// For resizing symbols with more complexity
@@ -217,7 +224,7 @@ namespace UniVil_Card_Generator.CardGeneration
 			if (activateAbility != "" || activateCost != "")
 			{
 				// Symbol
-				string activateSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", "Activate.png"));
+				string activateSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", "Activate" + (useVG ? "_VG" : "") + ".png"));
 				Image activateSymbol = Image.FromFile(activateSymbolPath);
 				float resizing = actionSymbolLines * lineHeight / activateSymbol.Height;
 				float symbolCenterX = maxWidth / 2;
@@ -233,7 +240,7 @@ namespace UniVil_Card_Generator.CardGeneration
 					}
 					if (ability == "" && activateAbility != "")
 					{
-						currentY = lineHeight * 0.25F;
+						currentY = lineHeight * 0.15F;
 					}
 					DrawSymbol(activateSymbol, drawing, textColor, symbolCenterX, currentY + actionSymbolLines * lineHeight / 2, resizing);
 					
@@ -246,10 +253,9 @@ namespace UniVil_Card_Generator.CardGeneration
 						float activateCostY = currentY + (3 * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
 						if (drawColon)
 						{
-							Font acFont = new Font(font, FontStyle.Bold);
-							float costCenterX = costLeftX + drawing.MeasureString(activateCost, acFont, maxWidth, sf).Width / 2;
+							float costCenterX = costLeftX + drawing.MeasureString(activateCost, abilityBoldFont, maxWidth, sf).Width / 2;
 							DrawWordByWord(colon, drawing, sf, maxWidth, lineHeight, colonCenterX, currentY + lineHeight);
-							words = GetCardWords(activateCost, textBrush, acFont, keywordsAndColors);
+							words = GetCardWords(activateCost, textBrush, abilityBoldFont, keywordsAndColors);
 							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, costCenterX, activateCostY);
 						}
 						else
@@ -300,6 +306,7 @@ namespace UniVil_Card_Generator.CardGeneration
 				{
 					assetName = "GainPower";
 				}
+				if (useVG) assetName += "_VG";
 				string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + ".png"));
 				Image gainsSymbol = Image.FromFile(gainsSymbolPath);
 				float resizing = actionSymbolLines * lineHeight / gainsSymbol.Height;
@@ -718,6 +725,8 @@ namespace UniVil_Card_Generator.CardGeneration
 			// Set up variables we'll potentially need
 			float dlLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float asLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
+			bool useVG = SettingsHelper.GetSettingsValue("Card", "useVideoGameAssets") == "true";
+
 			Color color = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
 			Brush brush = new SolidBrush(color);
 
@@ -802,6 +811,7 @@ namespace UniVil_Card_Generator.CardGeneration
 					{
 						assetName = "GainPower";
 					}
+					if (useVG) assetName += "_VG";
 					string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + MiscHelper.FindExtension("assets", assetName)));
 					Image asset = Image.FromFile(gainsSymbolPath);
 					float resizing = string.Equals(assetName, "DividingLine") ? 1.0F : asLines * lineH / asset.Height;
