@@ -19,7 +19,11 @@ class Program
         }
         
         // Setup variables
-        Color textColor = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
+        string customColor = SettingsHelper.GetSettingsValue("Text", "textColor");
+        bool useCustomColor = MiscHelper.CorrectColorFormat(customColor);
+        Color textColor = useCustomColor ? 
+            ColorTranslator.FromHtml(customColor) :
+            ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
 		Color fateTextColor = ColorTranslator.FromHtml("#000000");
         int titleAreaMaxWidth = SettingsHelper.GetSettingsValue("Card", "titleMaxWidth") == "" ?
             int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth")) :

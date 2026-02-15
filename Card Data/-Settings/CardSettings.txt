@@ -11,3 +11,11 @@ titleMaxWidth:
 # The maximum width the Type can take. Enlarge for longer type names/combinations.
 # Accepts: any number within 200-650. Default: 428
 typeMaxWidth:
+
+# Whether or not you want your images to be converted to grayscale before being placed on the card.
+# Accepts: true or false. Default: false
+convertToGrayscale:
+
+# Whether or not you want to use the video game assets. This only applies to action symbols.
+# Accepts: true or false. Default: false
+useVideoGameAssets:

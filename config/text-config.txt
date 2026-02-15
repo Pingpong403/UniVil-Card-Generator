@@ -11,9 +11,9 @@ topRightFontSize:120
 bottomRightFontSize:120
 typeFontSize:92
 fontDecreaseGranularity:0.4
-lineSpacingFactor:0.9
+lineSpacingFactor:1
 abilityPaddingLines:0.5
-spaceShrink:0.7
+spaceShrink:0.71
 italicCharacter:*
 escapeCharacter:\
 newlineCharacter:%

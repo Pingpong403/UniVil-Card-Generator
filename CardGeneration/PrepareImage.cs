@@ -28,7 +28,8 @@ namespace UniVil_Card_Generator.CardGeneration
 				relativePath = Path.Combine("assets", "black_bg.png");
 				fullPath = PathHelper.GetFullPath(relativePath);
 			}
-			using Image img = Image.FromFile(fullPath);
+			bool makeGrayscale = SettingsHelper.GetSettingsValue("Card", "convertToGrayscale") == "true";
+			using Bitmap img = makeGrayscale ? MiscHelper.MakeGrayscale((Bitmap)Image.FromFile(fullPath)) : (Bitmap)Image.FromFile(fullPath);
 
 			float targetHeight = float.Parse(ConfigHelper.GetConfigValue("card", "imageAreaHeight"), CultureInfo.InvariantCulture);
 			float ratio = targetHeight / img.Height;
