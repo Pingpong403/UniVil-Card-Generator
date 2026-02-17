@@ -28,11 +28,10 @@ namespace UniVil_Card_Generator.CardGeneration
 			// For titles, capitalize the text
 			text = text.ToUpper();
 
-			// Set the stringformat flags for center alignment and no trimming
-			StringFormat sf = StringFormat.GenericTypographic;
-			sf.Trimming = StringTrimming.None;
-			sf.Alignment = StringAlignment.Center;
-			sf.LineAlignment = StringAlignment.Center;
+			// Set the textformatflags for center alignment and no trimming
+			TextFormatFlags tf = TextFormatFlags.VerticalCenter|
+				TextFormatFlags.HorizontalCenter|
+				TextFormatFlags.NoPadding;
 
 			// Create a new image of the maximum size for our graphics
 			Image img = new Bitmap(maxWidth, maxHeight);
@@ -48,14 +47,11 @@ namespace UniVil_Card_Generator.CardGeneration
 			// Paint a transparent background
 			drawing.Clear(Color.Transparent);
 
-			// Create a brush for the text
-			Brush textBrush = new SolidBrush(textColor);
-
 			// One line maximum
-			float textHeight = (float)Math.Ceiling(drawing.MeasureString(text, font, 100000, sf).Height);
+			float textHeight = TextRenderer.MeasureText(text, font, new Size(1000, 1000), tf).Height;
 
 			// Find the proper squish ratio for given title
-			float textFullWidth = drawing.MeasureString(text, font, 100000, sf).Width;
+			float textFullWidth = TextRenderer.MeasureText(text, font, new Size(1000, 1000), tf).Width;
 			if (textFullWidth > maxWidth)
 			{
 				float horizontalSquish = maxWidth / textFullWidth;
@@ -64,24 +60,15 @@ namespace UniVil_Card_Generator.CardGeneration
 			}
 
 			// Get all the words
-			List<CardWord> words = GetCardWords(text, textBrush, font, null);
+			List<CardWord> words = GetCardWords(text, textColor, font, null);
 
 			// Set up variables
 			float startY = (maxHeight - textHeight) / 2;
 
 			// Draw title word by word
-			float currentX = (maxWidth - textFullWidth) / 2;
-			foreach (CardWord word in words)
-			{
-				float wordWidth = word.GetSizeF(drawing, maxWidth, sf).Width;
-				float wordHeight = word.GetSizeF(drawing, maxWidth, sf).Height;
-				drawing.DrawString(word.GetText(), word.GetTextFont(), word.GetTextBrush(), new RectangleF(currentX, startY, wordWidth, wordHeight), sf);
-				currentX += wordWidth;
-			}
+			DrawWordByWord(words, drawing, tf, maxWidth, textHeight, maxWidth / 2, startY);
 
 			drawing.Save();
-
-			textBrush.Dispose();
 			drawing.Dispose();
 
 			// Ensure output directory exists and save per-element PNG
@@ -505,6 +492,150 @@ namespace UniVil_Card_Generator.CardGeneration
 		/// <param name="keywordData">a dictionary of keywords and their associated colors</param>
 		/// <param name="isType">whether or not this is the type element</param>
 		/// <returns>a list of all words as CardWord objects</returns>
+		public static List<CardWord> GetCardWords(string text, Color defaultColor, Font defaultFont, Dictionary<string, string>? keywordData, bool isType = false)
+		{
+			char italicSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "italicCharacter"));
+			char escapeSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "escapeCharacter"));
+			char newlineSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "newlineCharacter"));
+
+			Font italicFont = new Font(defaultFont, FontStyle.Italic);
+			Font boldFont = new(defaultFont, FontStyle.Bold);
+			Font boldItalicFont = new Font(defaultFont, FontStyle.Bold | FontStyle.Italic);
+
+			Font titleFont = FontLoader.GetFont(ConfigHelper.GetConfigValue("text", "titleFont"), int.Parse(ConfigHelper.GetConfigValue("text", "titleFontSize")));
+			bool useAltFont = titleFont.GetHashCode() == defaultFont.GetHashCode();
+			Font altFont = FontLoader.GetFont(ConfigHelper.GetConfigValue("text", "altFont"), defaultFont.Size);
+
+			List<CardWord> cardWords = [];
+
+			bool italicsOpen = false;
+			bool escapeNext = false;
+			bool ignoreFormatting = false;
+			string builtWord = "";
+			foreach (char letter in text)
+			{
+				if (letter == ' ' || (isType && letter == '/'))
+				{
+					// End of word
+					if (builtWord != "")
+					{
+						bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+						CardWord word = new(
+							builtWord,
+							isKeyword && !ignoreFormatting ? Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16)) : defaultColor,
+							isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+						);
+						word.SetType(isType);
+						cardWords.Add(word);
+					}
+					if (!isType) cardWords.Add(new CardWord(" ", defaultColor, defaultFont));
+					else if (letter == '/') cardWords.Add(new CardWord("/", defaultColor, defaultFont));
+					builtWord = "";
+					ignoreFormatting = false;
+				}
+				else if (escapeNext)
+				{
+					// If the next was a symbol, then we escape it
+					if (letter == italicSymbol ||
+						letter == escapeSymbol ||
+						letter == newlineSymbol
+						)
+					{
+						cardWords.Add(new CardWord(Convert.ToString(letter), defaultColor, defaultFont));
+					}
+
+					// Otherwise, this means the next word should not be formatted
+					else
+					{
+						if (builtWord == "") ignoreFormatting = true;
+						builtWord += letter;
+					}
+					escapeNext = false;
+				}
+				else
+				{
+					if (letter == italicSymbol)
+					{
+						italicsOpen = !italicsOpen;
+						if (builtWord != "")
+						{
+							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+							CardWord word = new(
+								builtWord,
+								isKeyword && !ignoreFormatting ? Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16)) : defaultColor,
+								isKeyword && !ignoreFormatting && !isType ? (!italicsOpen ? boldItalicFont : boldFont) : !italicsOpen ? italicFont : defaultFont
+							);
+							cardWords.Add(word);
+							builtWord = "";
+						}
+					}
+					else if (letter == escapeSymbol)
+					{
+						escapeNext = true;
+					}
+					else if (letter == newlineSymbol || letter == '\n')
+					{
+						if (builtWord != "")
+						{
+							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+							CardWord word = new(
+								builtWord,
+								isKeyword && !ignoreFormatting ? Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16)) : defaultColor,
+								isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+							);
+							cardWords.Add(word);
+							builtWord = "";
+						}
+						cardWords.Add(new CardWord("\n", defaultColor, defaultFont));
+						ignoreFormatting = false;
+					}
+					else
+					{
+						if (MiscHelper.IsPunctuation(Convert.ToString(letter)) && builtWord != "")
+						{
+							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+							CardWord word = new(
+								builtWord,
+								isKeyword && !ignoreFormatting ? Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16)) : defaultColor,
+								isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+							);
+							cardWords.Add(word);
+							cardWords.Add(new CardWord(Convert.ToString(letter), defaultColor, letter == '\'' && useAltFont ? altFont : defaultFont));
+							builtWord = "";
+							ignoreFormatting = false;
+						}
+						// Most generic case - add a letter to builtWord
+						else
+						{
+							builtWord += letter;
+						}
+					}
+				}
+			}
+			if (builtWord != "")
+			{
+				bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+				CardWord word = new(
+					builtWord,
+					isKeyword && !ignoreFormatting ? Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16)) : defaultColor,
+					isKeyword && !ignoreFormatting && !isType ? (italicsOpen ? boldItalicFont : boldFont) : italicsOpen ? italicFont : defaultFont
+				);
+				word.SetType(isType);
+				cardWords.Add(word);
+			}
+
+			return cardWords;
+		}
+
+		/// <summary>
+		/// Goes letter by letter to build words based on formatting rules.
+		/// </summary>
+		/// <param name="text">text to be converted</param>
+		/// <param name="defaultBrush">default text brush</param>
+		/// <param name="defaultFont">default text font</param>
+		/// <param name="keywordData">a dictionary of keywords and their associated colors</param>
+		/// <param name="isType">whether or not this is the type element</param>
+		/// <returns>a list of all words as CardWord objects</returns>
 		public static List<CardWord> GetCardWords(string text, Brush defaultBrush, Font defaultFont, Dictionary<string, string>? keywordData, bool isType = false)
 		{
 			char italicSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "italicCharacter"));
@@ -720,6 +851,157 @@ namespace UniVil_Card_Generator.CardGeneration
 		/// <param name="lineH">height each line takes up</param>
 		/// <param name="startY">the y-coordinate to start drawing at</param>
 		/// <returns>the y-coordinate drawing ended at</returns>
+		private static float DrawWordByWord(List<CardWord> words, Graphics g, TextFormatFlags tf, float maxW, float lineH, float centerX, float startY)
+		{
+			// Set up variables we'll potentially need
+			float dlLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
+			float asLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
+			Color color = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
+
+			// Draw text word by word
+			float currentY = startY;
+			int iCheck = 0;
+			int iDraw = 0;
+			float lineLength;
+			bool drawAsset = false;
+			bool endOfText = false;
+			while (!endOfText)
+			{
+				// First, find the length of this line
+				lineLength = 0;
+				try
+				{
+					bool endOfLine = false;
+					float currentWordWidth;
+					bool space = false;
+					float spaceWidth = 0;
+					while (!endOfLine)
+					{
+						// Measure each word
+						currentWordWidth = words[iCheck].GetSizeF(maxW, tf).Width;
+
+						if (words[iCheck].GetText() == " " && lineLength > 0)
+						{
+							if (lineLength == 0) iDraw++;
+							space = true;
+							spaceWidth = words[iCheck].GetSizeF(maxW, tf).Width;
+							iCheck++;
+						}
+						else if (AssetHelper.AssetExists(words[iCheck].GetText()))
+						{
+							endOfLine = true;
+							drawAsset = true;
+						}
+						else if (words[iCheck].GetText() == "\n")
+						{
+							endOfLine = true;
+							iCheck++;
+						}
+						else if (lineLength + currentWordWidth + (space ? spaceWidth : 0) > maxW)
+						{
+							endOfLine = true;
+						}
+						else
+						{
+							lineLength += currentWordWidth + (space ? spaceWidth : 0);
+							space = false;
+							iCheck++;
+						}
+					}
+				}
+				catch (Exception ex)            
+				{                
+					if (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
+					{
+						endOfText = true;
+					}
+					else
+						throw;
+				}
+				// Draw each word in the line
+				float currentX = centerX - lineLength / 2;
+				for (int i = iDraw; i < iCheck; i++)
+				{
+					CardWord word = words[i];
+					if (word.GetText() != "\n")
+					{
+						float wordWidth = words[iDraw].GetSizeF((int)maxW, tf).Width;
+						Bitmap textB = new((int)wordWidth, (int)lineH);
+						Graphics textG = Graphics.FromImage(textB);
+						textG.CompositingQuality = CompositingQuality.HighQuality;
+						textG.InterpolationMode = InterpolationMode.HighQualityBilinear;
+						textG.PixelOffsetMode = PixelOffsetMode.HighQuality;
+						textG.SmoothingMode = SmoothingMode.HighQuality;
+						textG.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+						textG.Clear(Color.Purple);
+						TextRenderer.DrawText(textG, word.GetText(), word.GetTextFont(), new Rectangle(0, 0, (int)wordWidth, (int)lineH), word.GetTextColor(), tf);
+						MiscHelper.Mask(textB, word.GetTextColor(), Color.Purple);
+						g.DrawImage(textB, new Point((int)currentX, (int)currentY));
+						currentX += wordWidth;
+					}
+					iDraw++;
+				}
+				// Move the register down
+				currentY += lineH;
+				// Draw the asset that is up to draw
+				if (drawAsset)
+				{
+					string assetName = AssetHelper.GetAssetName(words[iDraw].GetText());
+					string gainPowerAmt = AssetHelper.GainPowerAmount(assetName);
+					if (gainPowerAmt != "")
+					{
+						assetName = "GainPower";
+					}
+					string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + MiscHelper.FindExtension("assets", assetName)));
+					Image asset = Image.FromFile(gainsSymbolPath);
+					float resizing = string.Equals(assetName, "DividingLine") ? 1.0F : asLines * lineH / asset.Height;
+					float yOffset = string.Equals(assetName, "DividingLine") ? dlLines * lineH / 2 : asLines * lineH / 2;
+					DrawSymbol(asset, g, color, maxW / 2, currentY + yOffset, resizing);
+
+					// If this was a Gain Power action, draw the amount to be gained
+					if (gainPowerAmt != "")
+					{
+						Font gainPowerFont = FontLoader.GetFont(
+							ConfigHelper.GetConfigValue("text", "elementFont"),
+							float.Parse(ConfigHelper.GetConfigValue("text", "costFontSize")) * resizing
+						);
+						Point gainPowerPos = new(
+							(int)(maxW / 2),
+							(int)(currentY + asLines * lineH / 2)
+						);
+						TextRenderer.DrawText(g, gainPowerAmt, gainPowerFont, gainPowerPos, color, tf);
+					}
+					currentY += lineH * (string.Equals(assetName, "DividingLine") ? dlLines : asLines);
+					iCheck++;
+					iDraw++;
+					drawAsset = false;
+				}
+				// Eat through whitespace
+				bool ignoreSpaces = true;
+				while (ignoreSpaces)
+				{
+					if (iDraw < words.Count)
+					{
+						if (words[iDraw].GetText() == " ") iDraw++;
+						else ignoreSpaces = false;
+					}
+					else ignoreSpaces = false;
+				}
+			}
+			return currentY;
+		}
+
+		/// <summary>
+		/// For use when words of varying styles need to be drawn in a cohesive paragraph.
+		/// Meant to be used in a chain with other text that will share the same Graphics object.
+		/// </summary>
+		/// <param name="words">each word to be drawn</param>
+		/// <param name="g">the Graphics object used to draw</param>
+		/// <param name="sf">the StringFormat used to draw the words</param>
+		/// <param name="maxW">max width the words are allowed to take up</param>
+		/// <param name="lineH">height each line takes up</param>
+		/// <param name="startY">the y-coordinate to start drawing at</param>
+		/// <returns>the y-coordinate drawing ended at</returns>
 		private static float DrawWordByWord(List<CardWord> words, Graphics g, StringFormat sf, float maxW, float lineH, float centerX, float startY)
 		{
 			// Set up variables we'll potentially need
@@ -871,21 +1153,20 @@ namespace UniVil_Card_Generator.CardGeneration
 		public class CardWord
 		{
 			private string text;
-			private Brush textBrush;
+			private Brush textBrush = new SolidBrush(Color.Black);
+			private Color textColor = Color.Black;
 			private Font textFont;
 			private bool isType = false;
 
 			public CardWord()
 			{
 				text = "";
-				textBrush = new SolidBrush(Color.Black);
 				textFont = new Font(FontLoader.GetFont("roboto.ttf", 1), new FontStyle());
 			}
 
 			public CardWord(string text)
 			{
 				this.text = text;
-				textBrush = new SolidBrush(Color.Black);
 				textFont = new Font(FontLoader.GetFont("roboto.ttf", 1), new FontStyle());
 			}
 
@@ -896,22 +1177,41 @@ namespace UniVil_Card_Generator.CardGeneration
 				this.textFont = textFont;
 			}
 
+			public CardWord(string text, Color textColor, Font textFont)
+			{
+				this.text = text;
+				this.textColor = textColor;
+				this.textFont = textFont;
+			}
+
 			public CardWord(CardWord other)
 			{
 				text = other.GetText();
 				textBrush = other.GetTextBrush();
+				textColor = other.GetTextColor();
 				textFont = other.GetTextFont();
 			}
 
 			public string GetText() { return text; }
 			public Brush GetTextBrush() { return textBrush; }
+			public Color GetTextColor() { return textColor; }
 			public Font GetTextFont() { return textFont; }
 			public bool IsType() { return isType; }
 
 			public void SetText(string text) { this.text = text; }
 			public void SetTextBrush(Brush textBrush) { this.textBrush = textBrush; }
+			public void SetTextColor(Color textColor) { this.textColor = textColor; }
 			public void SetTextFont(Font textFont) { this.textFont = textFont; }
 			public void SetType(bool isType) { this.isType = isType; }
+
+			public SizeF GetSizeF(float maxWidth, TextFormatFlags tf)
+			{
+				if (text == " ")
+				{
+					return TextRenderer.MeasureText(text, textFont, new Size((int)maxWidth, 1000), tf);
+				}
+				return TextRenderer.MeasureText(text, textFont, new Size((int)maxWidth, 1000), tf);
+			}
 
 			public SizeF GetSizeF(Graphics drawing, float maxWidth, StringFormat sf)
 			{

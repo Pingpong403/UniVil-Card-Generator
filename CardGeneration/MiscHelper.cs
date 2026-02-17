@@ -173,6 +173,24 @@ namespace UniVil_Card_Generator.CardGeneration
 			return true;
 		}
 
+		public static void Mask(Bitmap b, Color correctC, Color bgC)
+		{
+			float totalDiff = Math.Abs(correctC.R - bgC.R) + 
+							  Math.Abs(correctC.G - bgC.G) + 
+							  Math.Abs(correctC.B - bgC.B);
+			for (int x = 0; x < b.Width; x++)
+			{
+				for (int y = 0; y < b.Height; y++)
+				{
+					float currDiff = Math.Abs(b.GetPixel(x, y).R - bgC.R) + 
+									 Math.Abs(b.GetPixel(x, y).G - bgC.G) + 
+									 Math.Abs(b.GetPixel(x, y).B - bgC.B);
+					int newA = (int)(currDiff / totalDiff * 255);
+					b.SetPixel(x, y, Color.FromArgb(newA, correctC));
+				}
+			}
+		}
+
 		/// <summary>
 		/// Changes the color of the given symbol.
 		/// </summary>

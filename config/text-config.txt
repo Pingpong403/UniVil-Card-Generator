@@ -1,3 +1,4 @@
+altFont:roboto.ttf
 titleFont:staatliches.ttf
 abilityFont:abel.ttf
 elementFont:staatliches.ttf
