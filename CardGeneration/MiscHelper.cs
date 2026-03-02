@@ -175,17 +175,18 @@ namespace UniVil_Card_Generator.CardGeneration
 
 		public static void Mask(Bitmap b, Color correctC, Color bgC)
 		{
-			float totalDiff = Math.Abs(correctC.R - bgC.R) + 
-							  Math.Abs(correctC.G - bgC.G) + 
-							  Math.Abs(correctC.B - bgC.B);
+			float totalDist = (float)Math.Sqrt((correctC.R - bgC.R) * (correctC.R - bgC.R) + 
+							  (correctC.G - bgC.G) * (correctC.G - bgC.G) + 
+							  (correctC.B - bgC.B) * (correctC.B - bgC.B));
 			for (int x = 0; x < b.Width; x++)
 			{
 				for (int y = 0; y < b.Height; y++)
 				{
-					float currDiff = Math.Abs(b.GetPixel(x, y).R - bgC.R) + 
-									 Math.Abs(b.GetPixel(x, y).G - bgC.G) + 
-									 Math.Abs(b.GetPixel(x, y).B - bgC.B);
-					int newA = (int)(currDiff / totalDiff * 255);
+					// Distance is greater the further the color is from the background color
+					float currDist = (float)Math.Sqrt((b.GetPixel(x, y).R - bgC.R) * (b.GetPixel(x, y).R - bgC.R) + 
+							 		 (b.GetPixel(x, y).G - bgC.G) * (b.GetPixel(x, y).G - bgC.G) + 
+							 		 (b.GetPixel(x, y).B - bgC.B) * (b.GetPixel(x, y).B - bgC.B));
+					int newA = (int)(currDist / totalDist * 255);
 					b.SetPixel(x, y, Color.FromArgb(newA, correctC));
 				}
 			}

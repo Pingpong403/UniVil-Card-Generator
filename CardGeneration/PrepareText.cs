@@ -933,9 +933,9 @@ namespace UniVil_Card_Generator.CardGeneration
 						textG.PixelOffsetMode = PixelOffsetMode.HighQuality;
 						textG.SmoothingMode = SmoothingMode.HighQuality;
 						textG.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-						textG.Clear(Color.Purple);
+						textG.Clear(ColorTranslator.FromHtml("#7f8f01"));
 						TextRenderer.DrawText(textG, word.GetText(), word.GetTextFont(), new Rectangle(0, 0, (int)wordWidth, (int)lineH), word.GetTextColor(), tf);
-						MiscHelper.Mask(textB, word.GetTextColor(), Color.Purple);
+						MiscHelper.Mask(textB, word.GetTextColor(), ColorTranslator.FromHtml("#7f8f01"));
 						g.DrawImage(textB, new Point((int)currentX, (int)currentY));
 						currentX += wordWidth;
 					}
